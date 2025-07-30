@@ -1,4 +1,5 @@
 Hooks.once('init', () => {
+  
   game.settings.register('npc-to-statblock', 'imageSide', {
     name: 'Image Side',
     hint: 'Choose the side where the NPC portrait is placed.',
@@ -8,19 +9,35 @@ Hooks.once('init', () => {
     choices: { left: 'Left', right: 'Right' },
     default: 'left'
   });
+  game.settings.register('npc-to-statblock', 'includePortrait', {
+    name: 'Include Portrait',
+    hint: 'Toggle whether the NPC portrait appears in the PDF.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
   game.settings.register('npc-to-statblock', 'titleFont', {
     name: 'Title Font',
     scope: 'world',
     config: true,
     type: String,
-    default: 'Andada'
+    choices: {
+      'Andada Pro': 'Andada Pro',
+      'Open Sans': 'Open Sans'
+    },
+    default: 'Andada Pro'
   });
   game.settings.register('npc-to-statblock', 'bodyFont', {
     name: 'Body Font',
     scope: 'world',
     config: true,
     type: String,
-    default: 'OpenSans'
+    choices: {
+      'Andada Pro': 'Andada Pro',
+      'Open Sans': 'Open Sans'
+    },
+    default: 'Open Sans'
   });
   game.settings.register('npc-to-statblock', 'titleColor', {
     name: 'Title Color',
@@ -62,8 +79,9 @@ async function exportStatblock(actor) {
   const pdf = new jsPDF('p', 'pt', 'a4');
   await ensureFonts(pdf);
 
+  const includePortrait = game.settings.get('npc-to-statblock', 'includePortrait');
   let portrait = null;
-  if (actor.img) {
+  if (includePortrait && actor.img) {
     try {
       portrait = await loadImageAsDataURL(actor.img);
     } catch (err) {
@@ -160,12 +178,9 @@ width:780px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);displa
       text-align: center;
     }
     
-     img.portrait {
-     max-width:250px;
-      float:$ {
-        imageSide
-      }
-
+    img.portrait {
+      max-width:250px;
+      float:${imageSide};
       object-fit: contain;
     }
 
@@ -363,4 +378,3 @@ function loadScript(src) {
     document.head.appendChild(script);
   });
 }
-
