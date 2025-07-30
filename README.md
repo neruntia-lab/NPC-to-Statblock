@@ -1,6 +1,6 @@
 # NPC to Statblock PDF
 
-This Foundry VTT module adds a button to NPC actor sheets which exports the sheet as a statblock styled PDF. The layout mirrors the example in `Statblocks.pdf` using jsPDF's HTML renderer.
+This Foundry VTT module adds a button to NPC actor sheets which exports the sheet as a statblock styled PDF.
 
 ## Features
 
