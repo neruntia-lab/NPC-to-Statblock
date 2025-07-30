@@ -1,0 +1,26 @@
+{
+  "name": "npc-to-statblock",
+  "title": "NPC to Statblock PDF",
+  "description": "Export NPC sheets as One DnD statblock PDFs.",
+  "version": "1.0.0",
+  "compatibleCoreVersion": "12",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "author": "Noise",
+  "scripts": [
+    "scripts/jspdf.umd.min.js",
+    "scripts/html2canvas.min.js",
+    "scripts/dompurify.min.js",
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/npc-to-statblock.css"
+  ],
+  "packs": [],
+  "languages": [],
+  "url": "",
+  "manifest": "",
+  "download": ""
+}
