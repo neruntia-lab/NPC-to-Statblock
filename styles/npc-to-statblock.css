@@ -1,0 +1,8 @@
+.export-statblock {
+  flex: 0;
+  margin-left: 4px;
+  cursor: pointer;
+}
+.export-statblock i {
+  color: #660000;
+}

@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'NameFont';
+  src: url('../fonts/Andada.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'TextFont';
+  src: url('../fonts/OpenSans.ttf') format('truetype');
+}
+.statblock {
+  font-family: 'TextFont', sans-serif;
+  color: #000;
+  max-width: 550px;
+}
+.statblock .name {
+  font-family: 'NameFont', serif;
+  color: #660000;
+  font-size: 24pt;
+  text-align: center;
+  margin-bottom: 8pt;
+}
+.statblock.left .portrait {
+  float: left;
+  margin: 0 10pt 10pt 0;
+}
+.statblock.right .portrait {
+  float: right;
+  margin: 0 0 10pt 10pt;
+}
+.description { white-space: pre-wrap; }

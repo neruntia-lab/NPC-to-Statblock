@@ -1,0 +1,7 @@
+{
+  "name": "npc-to-statblock",
+  "version": "1.0.0",
+  "description": "Foundry VTT module to export NPC sheets to PDF statblocks",
+  "author": "",
+  "license": "MIT"
+}

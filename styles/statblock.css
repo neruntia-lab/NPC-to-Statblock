@@ -1,0 +1,58 @@
+@font-face {
+  font-family: "StatNameFont";
+  src: url("/modules/npc-to-statblock/fonts/Andada.ttf") format("truetype");
+}
+@font-face {
+  font-family: "StatTextFont";
+  src: url("/modules/npc-to-statblock/fonts/OpenSans.ttf") format("truetype");
+}
+
+.statblock {
+  font-family: 'StatTextFont', sans-serif;
+  color: #000;
+  width: 550px;
+}
+.statblock .header .name {
+  font-family: 'StatNameFont', serif;
+  color: #660000;
+  margin: 0;
+}
+.statblock .portrait {
+  float: left;
+  margin-right: 10px;
+}
+.statblock .portrait.right {
+  float: right;
+  margin-left: 10px;
+}
+.statblock .content {
+  overflow: hidden;
+}
+
+.statblock .section-title {
+  font-family: 'StatTextFont', sans-serif;
+  font-weight: bold;
+  color: #660000;
+  margin-top: 1em;
+}
+
+.statblock .trait-name {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.statblock table.ability-scores {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+}
+.statblock table.ability-scores th {
+  background: #660000;
+  color: #fff;
+  padding: 2px 4px;
+}
+.statblock table.ability-scores td {
+  border: 1px solid #660000;
+  padding: 2px 4px;
+}

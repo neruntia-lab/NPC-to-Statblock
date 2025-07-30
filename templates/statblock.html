@@ -1,0 +1,44 @@
+<div class="statblock">
+  <div class="header">
+    <h1 class="name">{{name}}</h1>
+    <p class="meta">{{size}} {{type}}, {{alignment}}</p>
+  </div>
+  {{#if img}}
+  <div class="portrait {{imageAlign}}">
+    <img src="{{img}}" alt="portrait" />
+  </div>
+  {{/if}}
+  <div class="content">
+    <p><span class="section-title">Armor Class</span> {{ac}}</p>
+    <p><span class="section-title">Hit Points</span> {{hp}}</p>
+    <p><span class="section-title">Speed</span> {{speed}}</p>
+    <table class="ability-scores">
+      <tr>
+        {{#each abilities}}
+        <th>{{abbr}}</th>
+        {{/each}}
+      </tr>
+      <tr>
+        {{#each abilities}}
+        <td>{{value}} ({{mod}})</td>
+        {{/each}}
+      </tr>
+    </table>
+    {{#if traits.length}}
+      <p class="section-title">Traits</p>
+      {{#each traits}}
+        <p><span class="trait-name">{{name}}.</span> {{{description}}}</p>
+      {{/each}}
+    {{/if}}
+    {{#if actions.length}}
+      <p class="section-title">Actions</p>
+      {{#each actions}}
+        <p><span class="trait-name">{{name}}.</span> {{{description}}}</p>
+      {{/each}}
+    {{/if}}
+    {{#if description}}
+      <p class="section-title">Description</p>
+      {{{description}}}
+    {{/if}}
+  </div>
+</div>
