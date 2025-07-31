@@ -28,7 +28,7 @@ Hooks.once('init', () => {
     },
     default: 'Andada Pro'
   });
-  game.settings.register('npc-to-statblock', 'bodyFont', {
+   game.settings.register('npc-to-statblock', 'bodyFont', {
     name: 'Body Font',
     scope: 'world',
     config: true,
@@ -37,7 +37,7 @@ Hooks.once('init', () => {
       'Andada Pro': 'Andada Pro',
       'Open Sans': 'Open Sans'
     },
-    default: 'Open Sans'
+    default: 'Andada Pro'
   });
   game.settings.register('npc-to-statblock', 'titleColor', {
     name: 'Title Color',
@@ -76,8 +76,9 @@ async function exportStatblock(actor) {
     return;
   }
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p', 'pt', 'a4');
-  await ensureFonts(pdf);
+   const pdf = new jsPDF('p', 'pt', 'a4');
+  const fontCss = await ensureFonts(pdf);
+
 
   const includePortrait = game.settings.get('npc-to-statblock', 'includePortrait');
   let portrait = null;
@@ -89,7 +90,7 @@ async function exportStatblock(actor) {
     }
   }
 
-  const html = buildStatblockHtml(actor, portrait);
+  const html = buildStatblockHtml(actor, portrait, fontCss);
   await pdf.html(html, {
     autoPaging: 'text',
     margin: 20,
@@ -102,7 +103,7 @@ async function exportStatblock(actor) {
 }
 
 
-function buildStatblockHtml(actor, portrait) {
+function buildStatblockHtml(actor, portrait, fontCss = '') {
   const titleFont = game.settings.get('npc-to-statblock', 'titleFont');
   const bodyFont = game.settings.get('npc-to-statblock', 'bodyFont');
   const titleColor = game.settings.get('npc-to-statblock', 'titleColor');
@@ -165,17 +166,19 @@ function buildStatblockHtml(actor, portrait) {
   const buildItems = list => list.join('<br><br>');
 
   return `<div style="font-family:${bodyFont}, sans-serif;background-color:#fdf5e6;color:${textColor};padding:20px;margin:auto;
-width:780px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display:flow-root;">
+width:380px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display:flow-root;">
     <style>
-      h1,h2{font-family:${titleFont}, serif;color:${titleColor};text-align:center;font-variant:small-caps;padding-bottom:5px;}
-      .statblock-header{font-weight:bold;font-size:1.2em;text-transform:uppercase;margin-bottom:0.2em;}
-      .statblock-section{border-top:2px solid #333;margin-top:10px;padding-top:10px;}
-      .abilities,.saves,.skills,.senses,.languages,.challenge{display:flex;flex-wrap:wrap;justify-content:space-between;font-weight:bold;}
-      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{flex:1 0 30%;margin:5px 0;}
+      ${fontCss}
+      h1,h2{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:5px;}
+      .statblock-header{font-family:${titleFont};font-weight:bold;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;}
+      .statblock-section{font-family:${titleFont};margin-top:px;padding-top:10px;}
+      .abilities,.saves,.skills,.senses,.languages,.challenge{font-family:${titleFont};display:flex;justify-content: flex-start;gap: 10px;font-weight: bold;flex-wrap: wrap;}
+      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{  flex: 1 1 0;
+  text-align: left;}
       .actions,.reactions{margin-top:1em;}
 
       .text-center {
-      text-align: center;
+      text-align: left;
     }
     
     img.portrait {
@@ -200,9 +203,40 @@ width:780px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);displa
       flex-grow: 1;
     }
     
+    .tapered-line {
+  width: 100%;
+  height: 2px; /* Max height in the center */
+  background: black;
+clip-path: polygon(
+  0% 50%,       /* Left middle point */
+  25% 0%,       /* Left top taper */
+  75% 0%,       /* Right top taper */
+  100% 50%,     /* Right middle point */
+  75% 100%,     /* Right bottom taper */
+  25% 100%      /* Left bottom taper */
+);
+background-color:${titleColor};  
+}
+
+.abilitiesline{margin-bottom:10px;flex-wrap: wrap;justify-content: space-between;min-width: 30%;
+    
+}
+ 
+.statblockline{
+    padding-bottom:;
+}
+
+.growline{
+    margin-top:15px;
+    
+}
+
+
     </style>
     <h1>${actor.name}</h1>
     <div class="statblock-header text-center">${header}</div>
+    
+    <div class="tapered-line "></div>
     
      <div class="flex-container statblock-section">
      ${portrait ? `
@@ -210,13 +244,20 @@ width:780px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);displa
       <img class="portrait" src="${portrait}" />
     </div>` : ''}
     
+    
+    
     <div class="grow">
       <div>
         <strong>Armor Class</strong> ${data.attributes?.ac?.value || ''}<br>
         <strong>Hit Points</strong> ${data.attributes?.hp?.value || ''}<br>
         <strong>Speed</strong> ${getSpeedString(data.attributes)}
-        <div class="statblock-section abilities">${abilities}</div>
+              <div class="tapered-line growline "></div>
+
+        <div class="statblock-section abilitiesline">${abilities}</div>
       </div>
+      
+          <div class="tapered-line  "></div>
+
       <div class="statblock-section">
         <div class="saves"><strong>Saving Throws:</strong> ${saves}</div>
         <div class="skills"><strong>Skills:</strong> ${skills}</div>
@@ -227,9 +268,13 @@ width:780px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);displa
     </div>
   </div>
   
+  <div class="tapered-line growline "></div>
+  
 ${sections.traits.length ? `<div class="statblock-section traits">
+    
     <h2>Traits</h2>${buildItems(sections.traits)}
   </div>` : ''}
+  
   ${sections.actions.length ? `<div class="statblock-section actions">
     <h2>Actions</h2>${buildItems(sections.actions)}
   </div>` : ''}    
@@ -238,6 +283,8 @@ ${sections.traits.length ? `<div class="statblock-section traits">
     ${sections.legendary.length ? `<div class="statblock-section legendary-actions"><h2>Legendary Actions</h2>${buildItems(sections.legendary)}</div>` : ''}
   </div>`;
 }
+
+
 
 function htmlToText(html) {
   const div = document.createElement('div');
@@ -340,24 +387,33 @@ async function ensureDependencies() {
 }
 
 async function ensureFonts(pdf) {
-  const moduleData = game.modules.get('npc-to-statblock');
-  const basePath = moduleData?.url || moduleData?.root || moduleData?.path || `modules/${moduleData?.id}`;
   const fonts = [
-    { name: 'Andada', file: 'Andada.ttf' },
-    { name: 'OpenSans', file: 'OpenSans.ttf' }
+    {
+      name: 'Andada',
+      family: 'Andada Pro',
+      url: 'https://raw.githubusercontent.com/google/fonts/main/ofl/andadapro/AndadaPro-Regular.ttf'
+    },
+    {
+      name: 'OpenSans',
+      family: 'Open Sans',
+      url: 'https://raw.githubusercontent.com/google/fonts/main/apache/opensans/OpenSans-Regular.ttf'
+    }
   ];
+  let css = '';
   for (const font of fonts) {
     try {
-      const resp = await fetch(`${basePath}/fonts/${font.file}`);
+      const resp = await fetch(font.url);
       if (!resp.ok) continue;
       const buffer = await resp.arrayBuffer();
       const base64 = arrayBufferToBase64(buffer);
-      pdf.addFileToVFS(font.file, base64);
-      pdf.addFont(font.file, font.name, 'normal');
+      css += `@font-face { font-family: '${font.family}'; src: url(data:font/truetype;base64,${base64}) format('truetype'); font-weight: normal; font-style: normal; }\n`;
+      pdf.addFileToVFS(`${font.name}.ttf`, base64);
+      pdf.addFont(`${font.name}.ttf`, font.name, 'normal');
     } catch (err) {
       console.error(err);
     }
   }
+  return css;
 }
 
 function arrayBufferToBase64(buffer) {
@@ -378,3 +434,4 @@ function loadScript(src) {
     document.head.appendChild(script);
   });
 }
+
