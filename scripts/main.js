@@ -166,83 +166,39 @@ function buildStatblockHtml(actor, portrait, fontCss = '') {
   const buildItems = list => list.join('<br><br>');
 
   return `<div style="font-family:${bodyFont}, sans-serif;background-color:#fdf5e6;color:${textColor};padding:20px;margin:auto;
-width:380px;border:2px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display:flow-root;">
+width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display:flow-root;">
+    
+  
+
+<div class="grainy-background"></div>
+
     <style>
-      ${fontCss}
-      h1,h2{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:5px;}
-      .statblock-header{font-family:${titleFont};font-weight:bold;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;}
-      .statblock-section{font-family:${titleFont};margin-top:px;padding-top:10px;}
-      .abilities,.saves,.skills,.senses,.languages,.challenge{font-family:${titleFont};display:flex;justify-content: flex-start;gap: 10px;font-weight: bold;flex-wrap: wrap;}
-      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{  flex: 1 1 0;
-  text-align: left;}
+      .actor-name{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:3px;font-size: 25px;}
+      .statblock-header{font-weight:bold;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;padding-bottom:6px;}
+      .statblock-section{;margin-top:px;padding-top:10px;padding-bottom:6px}
+      .abilities,.saves,.skills,.senses,.languages,.challenge{display: flex;justify-content: flex-start; flex-wrap:wrap;gap:5px;font-weight:normal;}
+      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{flex: 1 1 0;text-align:left;}
       .actions,.reactions{margin-top:1em;}
+      .text-center {text-align: left;}
+      img.portrait {max-width:250px;float:${imageSide};object-fit: contain;}
+      .img-container {height:auto;display: flex;justify-content: center;}
+      .flex-container {display: flex;flex-direction: row; gap: 20px;}
+      .grow {flex-grow: 1;}
+      .taper-right {height: 0em;border-top: 2px solid transparent;border-bottom: 2px solid transparent;border-left: 300px solid ${titleColor};}
 
-      .text-center {
-      text-align: left;
-    }
-    
-    img.portrait {
-      max-width:250px;
-      float:${imageSide};
-      object-fit: contain;
-    }
-
-    .img-container {
-      height:auto;
-      display: flex;
-      justify-content: center;
-    }
-
-    .flex-container {
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
-    }
-
-    .grow {
-      flex-grow: 1;
-    }
-    
-    .tapered-line {
-  width: 100%;
-  height: 2px; /* Max height in the center */
-  background: black;
-clip-path: polygon(
-  0% 50%,       /* Left middle point */
-  25% 0%,       /* Left top taper */
-  75% 0%,       /* Right top taper */
-  100% 50%,     /* Right middle point */
-  75% 100%,     /* Right bottom taper */
-  25% 100%      /* Left bottom taper */
-);
-background-color:${titleColor};  
-}
-
-.abilitiesline{margin-bottom:10px;flex-wrap: wrap;justify-content: space-between;min-width: 30%;
-    
-}
- 
-.statblockline{
-    padding-bottom:;
-}
-
-.growline{
-    margin-top:15px;
-    
-}
-
-
+        .abilitiesline{margin-bottom:10px;}
+      .statblockline{;}
+      .growline{margin-top:15px;}
     </style>
-    <h1>${actor.name}</h1>
+    
+    
+    <div class="actor-name">${actor.name}</div>
     <div class="statblock-header text-center">${header}</div>
     
-    <div class="tapered-line "></div>
+<div class="taper-right"></div>
     
      <div class="flex-container statblock-section">
-     ${portrait ? `
-    <div class="img-container">
-      <img class="portrait" src="${portrait}" />
-    </div>` : ''}
+    
     
     
     
@@ -253,10 +209,13 @@ background-color:${titleColor};
         <strong>Speed</strong> ${getSpeedString(data.attributes)}
               <div class="tapered-line growline "></div>
 
+<div class="taper-right"></div>
+
         <div class="statblock-section abilitiesline">${abilities}</div>
       </div>
-      
-          <div class="tapered-line  "></div>
+
+<div class="taper-right"></div>
+
 
       <div class="statblock-section">
         <div class="saves"><strong>Saving Throws:</strong> ${saves}</div>
@@ -268,7 +227,7 @@ background-color:${titleColor};
     </div>
   </div>
   
-  <div class="tapered-line growline "></div>
+<div class="taper-right"></div>
   
 ${sections.traits.length ? `<div class="statblock-section traits">
     
@@ -283,6 +242,7 @@ ${sections.traits.length ? `<div class="statblock-section traits">
     ${sections.legendary.length ? `<div class="statblock-section legendary-actions"><h2>Legendary Actions</h2>${buildItems(sections.legendary)}</div>` : ''}
   </div>`;
 }
+
 
 
 
