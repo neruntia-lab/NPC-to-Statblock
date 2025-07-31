@@ -113,7 +113,7 @@ function buildStatblockHtml(actor, portrait, fontCss = '') {
   const data = actor.system || actor.data.data || {};
   const header = `${data.traits?.size || ''} (${data.details?.type?.value || data.details?.type || ''}), ${data.details?.alignment || ''}`.trim();
 
-  const abilities = ['str','dex','con','int','wis','cha'].map(a => {
+const abilities = ['str','dex','con','int','wis','cha'].map(a => {
     const val = data.abilities?.[a]?.value ?? 10;
     const mod = Math.floor((val - 10) / 2);
     const modStr = mod >= 0 ? `+${mod}` : mod;
@@ -130,8 +130,9 @@ function buildStatblockHtml(actor, portrait, fontCss = '') {
   const skills = getList(data.skills);
   const senses = getSensesString(data);
   const languages = getLanguagesString(data.traits?.languages);
+  const resistances = getTraitString(data.traits?.dr);
+  const immunities = getTraitString(data.traits?.di);
   const challenge = data.details?.cr ? `${data.details.cr}` : '';
-
   const sections = {
     traits: [],
     actions: [],
@@ -176,8 +177,8 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
       .actor-name, h2{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:3px;font-size: 25px;}
       .statblock-header{font-weight:Regular;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;padding-bottom:6px;}
       .statblock-section{;margin-top:px;padding-top:10px;padding-bottom:6px}
-      .abilities,.saves,.skills,.senses,.languages,.challenge{display: flex;justify-content: flex-start; flex-wrap:wrap;gap:5px;font-weight:normal;}
-      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{flex: 1 1 0;text-align:left;}
+      .abilities,.saves,.skills,.senses,.languages,.challenge,.proficiency,.resistances,.immunities{display: flex;justify-content: flex-start; flex-wrap:wrap;gap:5px;font-weight:normal;}
+      .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span,.proficiency span,.resistances span,.immunities span{flex: 1 1 0;text-align:left;}
       .actions,.reactions{margin-top:1em;}
       .text-center {text-align: left;}
       img.portrait {max-width:250px;float:${imageSide};object-fit: contain;}
@@ -189,6 +190,7 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
       .statblockline{;}
       .growline{margin-top:15px;}
       .traits{padding-top:25px;}
+      .abilities-bottom{display: flex;justify-content: space-between;align-items: flex-start;gap: 10px;}
     </style>
     
     
@@ -211,7 +213,7 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
 
 <div class="taper-right"></div>
 
-        <div class="statblock-section abilitiesline">${abilities}</div>
+        <div class="statblock-section abilities abilitiesline">${abilities}</div>
       </div>
 
 <div class="taper-right"></div>
@@ -222,7 +224,12 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
         <div class="skills"><strong>Skills:</strong> ${skills}</div>
         <div class="senses"><strong>Senses:</strong> ${senses}</div>
         <div class="languages"><strong>Languages:</strong> ${languages}</div>
+        <div class="resistances"><strong>Resistances:</strong> ${resistances}</div>
+        <div class="immunities"><strong>Immunities:</strong> ${immunities}</div>
+<div class="abilities-bottom">       
         <div class="challenge"><strong>Challenge:</strong> ${challenge}</div>
+       <div class="proficiency"><strong>Proficiency Bonus:</strong> +${pb}</div>
+</div>     
       </div>
     </div>
   </div>
@@ -280,6 +287,17 @@ function getSavingThrows(abilities = {}, pb = 0) {
 }
 
 function getLanguagesString(trait) {
+  if (!trait) return '';
+  let values = [];
+  const val = trait.value;
+  if (val instanceof Set) values = Array.from(val);
+  else if (Array.isArray(val)) values = val;
+  else if (typeof val === 'string') values = val.split(/[,;]\s*/);
+  if (trait.custom) values.push(trait.custom);
+  return values.filter(Boolean).join(', ');
+}
+
+function getTraitString(trait) {
   if (!trait) return '';
   let values = [];
   const val = trait.value;
