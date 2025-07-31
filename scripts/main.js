@@ -28,7 +28,7 @@ Hooks.once('init', () => {
     },
     default: 'Andada Pro'
   });
-   game.settings.register('npc-to-statblock', 'bodyFont', {
+     game.settings.register('npc-to-statblock', 'bodyFont', {
     name: 'Body Font',
     scope: 'world',
     config: true,
@@ -173,8 +173,8 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
 <div class="grainy-background"></div>
 
     <style>
-      .actor-name{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:3px;font-size: 25px;}
-      .statblock-header{font-weight:bold;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;padding-bottom:6px;}
+      .actor-name, h2{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:3px;font-size: 25px;}
+      .statblock-header{font-weight:Regular;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;padding-bottom:6px;}
       .statblock-section{;margin-top:px;padding-top:10px;padding-bottom:6px}
       .abilities,.saves,.skills,.senses,.languages,.challenge{display: flex;justify-content: flex-start; flex-wrap:wrap;gap:5px;font-weight:normal;}
       .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span{flex: 1 1 0;text-align:left;}
@@ -185,10 +185,10 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
       .flex-container {display: flex;flex-direction: row; gap: 20px;}
       .grow {flex-grow: 1;}
       .taper-right {height: 0em;border-top: 2px solid transparent;border-bottom: 2px solid transparent;border-left: 300px solid ${titleColor};}
-
-        .abilitiesline{margin-bottom:10px;}
+      .abilitiesline{margin-bottom:10px;}
       .statblockline{;}
       .growline{margin-top:15px;}
+      .traits{padding-top:25px;}
     </style>
     
     
@@ -348,32 +348,43 @@ async function ensureDependencies() {
 
 async function ensureFonts(pdf) {
   const fonts = [
-    {
-      name: 'Andada',
-      family: 'Andada Pro',
-      url: 'https://raw.githubusercontent.com/google/fonts/main/ofl/andadapro/AndadaPro-Regular.ttf'
-    },
-    {
-      name: 'OpenSans',
-      family: 'Open Sans',
-      url: 'https://raw.githubusercontent.com/google/fonts/main/apache/opensans/OpenSans-Regular.ttf'
-    }
+    { family: 'Andada Pro' },
+    { family: 'Open Sans' }
   ];
-  let css = '';
   for (const font of fonts) {
     try {
-      const resp = await fetch(font.url);
-      if (!resp.ok) continue;
-      const buffer = await resp.arrayBuffer();
-      const base64 = arrayBufferToBase64(buffer);
-      css += `@font-face { font-family: '${font.family}'; src: url(data:font/truetype;base64,${base64}) format('truetype'); font-weight: normal; font-style: normal; }\n`;
-      pdf.addFileToVFS(`${font.name}.ttf`, base64);
-      pdf.addFont(`${font.name}.ttf`, font.name, 'normal');
+      const fontData = await fetchGoogleFont(font.family);
+      pdf.addFileToVFS(fontData.fileName, fontData.base64);
+      pdf.addFont(fontData.fileName, font.family.replace(/\s+/g, ''), 'normal');
+      injectFontStyle(font.family, fontData.base64, fontData.format);
     } catch (err) {
       console.error(err);
     }
   }
-  return css;
+}
+
+async function fetchGoogleFont(family) {
+  const familyQuery = family.replace(/\s+/g, '+');
+  const cssResp = await fetch(`https://fonts.googleapis.com/css2?family=Andada+Pro&display=swap`);
+  if (!cssResp.ok) throw new Error(`Could not load font CSS for ${family}`);
+  const css = await cssResp.text();
+  const urlMatch = css.match(/src: url\(([^)]+)\) format\('([^']+)'\)/);
+  if (!urlMatch) throw new Error(`No font URL found for ${family}`);
+  const fontUrl = urlMatch[1];
+  const format = urlMatch[2];
+  const fontResp = await fetch(fontUrl);
+  if (!fontResp.ok) throw new Error(`Could not load font file for ${family}`);
+  const buffer = await fontResp.arrayBuffer();
+  const base64 = arrayBufferToBase64(buffer);
+  const ext = fontUrl.split('.').pop().split('?')[0];
+  return { fileName: `${family.replace(/\s+/g, '')}.${ext}`, base64, format };
+}
+
+function injectFontStyle(name, base64, format) {
+  const mime = format.includes('woff2') ? 'font/woff2' : format.includes('woff') ? 'font/woff' : 'font/ttf';
+  const style = document.createElement('style');
+  style.textContent = `@font-face{font-family:'${name}';font-style:normal;font-weight:400;src:url(data:${mime};base64,${base64}) format('${format}');}`;
+  document.head.appendChild(style);
 }
 
 function arrayBufferToBase64(buffer) {
