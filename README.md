@@ -6,9 +6,9 @@ This Foundry VTT module adds a button to NPC actor sheets which exports the shee
 
 - Adds an export button in the top right corner of NPC sheets.
 - Compiles the actor's data, abilities and items into a PDF using **jsPDF**.
-- Portrait can be aligned left or right and text wraps around it.
+- Portrait can be aligned left or right and text wraps around it (feature has been disabled temporarily).
 - Traits, actions, bonus actions, reactions and legendary actions are separated into their own sections.
-- Colors and fonts are configurable in the module settings.
+- Colors and fonts(fonts are not ready yet) are configurable in the module settings.
 - Saving throws, senses, languages and movement speeds are pulled from the actor data.
 
 ## Usage
