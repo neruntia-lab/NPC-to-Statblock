@@ -176,7 +176,7 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
     <style>
       .actor-name, h2{font-family:${titleFont}, serif;color:${titleColor};text-align:left;font-variant:small-caps;padding-bottom:3px;font-size: 25px;}
       .statblock-header{font-weight:Regular;font-size:0.9em;font-style: italic;text-transform:capitalize;margin-bottom:0.2em;padding-bottom:6px;}
-      .statblock-section{;margin-top:px;padding-top:10px;padding-bottom:6px}
+      .statblock-section{;margin-top:px;padding-top:10px;padding-bottom:6px;}
       .abilities,.saves,.skills,.senses,.languages,.challenge,.proficiency,.resistances,.immunities{display: flex;justify-content: flex-start; flex-wrap:wrap;gap:5px;font-weight:normal;}
       .abilities div,.saves span,.skills span,.senses span,.languages span,.challenge span,.proficiency span,.resistances span,.immunities span{flex: 1 1 0;text-align:left;}
       .actions,.reactions{margin-top:1em;}
@@ -186,7 +186,7 @@ width:450px;border:px solid #333;box-shadow:5px 5px 15px rgba(0,0,0,0.3);display
       .flex-container {display: flex;flex-direction: row; gap: 20px;}
       .grow {flex-grow: 1;}
       .taper-right {height: 0em;border-top: 2px solid transparent;border-bottom: 2px solid transparent;border-left: 300px solid ${titleColor};}
-      .abilitiesline{margin-bottom:10px;}
+      .abilitiesline{margin-bottom:10px;color:${titleColor}}
       .statblockline{;}
       .growline{margin-top:15px;}
       .traits{padding-top:25px;}
@@ -365,16 +365,16 @@ async function ensureDependencies() {
 }
 
 async function ensureFonts(pdf) {
-  const fonts = [
-    { family: 'Andada Pro' },
-    { family: 'Open Sans' }
-  ];
-  for (const font of fonts) {
+  const fonts = new Set([
+    game.settings.get('npc-to-statblock', 'titleFont'),
+    game.settings.get('npc-to-statblock', 'bodyFont')
+  ]);
+  for (const family of fonts) {
     try {
-      const fontData = await fetchGoogleFont(font.family);
+      const fontData = await fetchGoogleFont(family);
       pdf.addFileToVFS(fontData.fileName, fontData.base64);
-      pdf.addFont(fontData.fileName, font.family.replace(/\s+/g, ''), 'normal');
-      injectFontStyle(font.family, fontData.base64, fontData.format);
+      pdf.addFont(fontData.fileName, family.replace(/\s+/g, ''), 'normal');
+      injectFontStyle(family, fontData.base64, fontData.format);
     } catch (err) {
       console.error(err);
     }
@@ -383,12 +383,12 @@ async function ensureFonts(pdf) {
 
 async function fetchGoogleFont(family) {
   const familyQuery = family.replace(/\s+/g, '+');
-  const cssResp = await fetch(`https://fonts.googleapis.com/css2?family=Andada+Pro&display=swap`);
+  const cssResp = await fetch(`https://fonts.googleapis.com/css2?family=${familyQuery}&display=swap`);
   if (!cssResp.ok) throw new Error(`Could not load font CSS for ${family}`);
   const css = await cssResp.text();
-  const urlMatch = css.match(/src: url\(([^)]+)\) format\('([^']+)'\)/);
+ const urlMatch = css.match(/src:\s*url\(([^)]+)\) format\('([^']+)'\)/);
   if (!urlMatch) throw new Error(`No font URL found for ${family}`);
-  const fontUrl = urlMatch[1];
+  const fontUrl = urlMatch[1].replace(/['"]/g, '');
   const format = urlMatch[2];
   const fontResp = await fetch(fontUrl);
   if (!fontResp.ok) throw new Error(`Could not load font file for ${family}`);
