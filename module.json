@@ -21,7 +21,8 @@
   "packs": [],
   "languages": [],
   "url": "https://github.com/neruntia-lab/NPC-to-Statblock/blob/main/module.json",
-  "manifest": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.1/module.json",
+  "manifest": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/latest/download/module.json
   "download": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.1/npc-to-statblock.zip"
 }
+
 
