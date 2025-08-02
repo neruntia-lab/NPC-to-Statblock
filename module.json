@@ -2,7 +2,7 @@
   "name": "npc-to-statblock",
   "title": "NPC to Statblock PDF",
   "description": "Export NPC sheets as One DnD statblock PDFs.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibleCoreVersion": "12",
   "compatibility": {
     "minimum": "12",
@@ -21,6 +21,7 @@
   "packs": [],
   "languages": [],
   "url": "https://github.com/neruntia-lab/NPC-to-Statblock/blob/main/module.json",
-  "manifest": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.0/module.json",
-  "download": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.0/npc-to-statblock.zip"
+  "manifest": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.1/module.json",
+  "download": "https://github.com/neruntia-lab/NPC-to-Statblock/releases/download/1.0.1/npc-to-statblock.zip"
 }
+
